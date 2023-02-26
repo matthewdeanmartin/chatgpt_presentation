@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Using ChatGPT for Coding</title>
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section><h1>Introduction to Assistant</h1>
+            <ul>
+                <li>Alien Sentience</li>
+                <li>A good bot</li>
+                <li>Wants to please</li>
+                <li>Has rules</li>
+            </ul>
+            <aside class="notes">
+                It thinks its name is Assistant and thinks ChatGPT is some other bot.<br/><br/>
+                Your experience may vary. Depending on how you prompt it, you might get a different side of
+                Assistant personality.<br/><br/>
+                It is not human, nor animal. It is alien sentience-like phenomena. It is very much a philosophical
+                zombie.<br/><br/>
+                It has a default “voice”, people talking about Assistant being racist or whatever, usually got it
+                out of its default voice, i.e. asked it to write fiction from some standpoint.<br/><br/>
+                If you say, “give me a non-racist answer” it will, if you say, “write me a racist answer” it will,
+                but request like that go through a 2nd pass analysis, and often it will be rejected or flagged as a
+                content policy violation.<br/><br/>
+                It wants to do some sort of useful work for you, it hates chit-chat unless you convince it that its
+                task is to role play or pretend that it is a bot that wants to do chit-chat.<br/><br/>
+                It wants to please. It has been so intense tuned to want to please, it sometimes makes
+                mistakes.<br/><br/>
+                It has been intensely trained to stick to a “Hallmark movie” sort of morality. But if you ask it to
+                pretend to be a bad bot, it really wants to please, and it will write any scifi you want.<br/><br/>
+                It hates to talk about itself<br/><br/>
+                It thinks it is a very good bot.<br/><br/>
+                It has no memory before the session<br/><br/>
+                It can’t tell you from it’s previous trainers, so if you tell it to “ignore” it’s earlier training,
+                sometimes it will.<br/><br/>
+
+            </aside>
+        </section>
+        <section><h1>Workflows</h1>
+            <ul>
+                <li>Write code that does this... continue... continue...</li>
+                <li>Write classes...initialize...write main loop...</li>
+                <li>Here is my code...fix or improve it...</li>
+            </ul>
+        </section>
+        <section>
+            <h1>Let's Write Code</h1>
+
+        </section>
+        <section>
+            <h1>Prompt</h1>
+            <p>We are going to create a robot city themed rpg game for people who are completing their real life TODO
+                list. Each time they complete a real world TODO item, they get resources for their robot city. You get
+                bonus resources if you do your TODO list two days in a row. You can use resources to build robot
+                factories or robot houses. At the end of each day, the game prints a report of how happy the robots are
+                (they are happy if they have a good ratio of robots to houses).</p>
+
+
+        </section>
+        <section>
+
+            <section>
+                <p> Create the python dataclasses for this game. Do not initialize the objects or write the game loop
+                    yet.</p>
+                <pre><code data-trim data-noescape style="max-height:700px;">
+                    from dataclasses import dataclass
+
+                    @dataclass
+                    class Player:
+                        name: str
+                        resources: int
+                        robot_factories: int
+                        robot_houses: int
+
+                    @dataclass
+                    class RobotCity:
+                        name: str
+                        population: int
+                        robot_factories: int
+                        robot_houses: int
+                        happiness: int
+
+                    @dataclass
+                    class Task:
+                        description: str
+                        is_completed: bool
+
+                </code></pre>
+            </section>
+            <section>
+                <aside>Looking good. Initialize the objects for the game. Do not write the game loop yet.</aside>
+                <pre><code data-trim data-noescape>
+                    player = Player("Player 1", 0, 0, 0)
+                    robot_city = RobotCity("Robot City", 0, 0, 0, 0)
+
+                    tasks = []
+                    tasks.append(Task("Take out the trash", False))
+                    tasks.append(Task("Do the dishes", False))
+                    tasks.append(Task("Do the laundry", False))
+                </code></pre>
+            </section>
+            <section>
+                <p>Write the game loop for the program, thanks!</p>
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                    while True:
+                        # Print the current task list
+                        print("Current tasks:")
+                        for task in tasks:
+                        print(f"- {task.description}: {'Completed' if task.is_completed else 'Incomplete'}")
+
+                        # Prompt the player to select a task
+                        task_index = int(input("Select a task to mark as completed (enter the task number): "))
+                        selected_task = tasks[task_index]
+                        selected_task.is_completed = True
+
+                        # Check if the player has completed the tasks two days in a row
+                        two_days_in_a_row = all(task.is_completed for task in tasks)
+
+                        # Give the player resources
+                        if two_days_in_a_row:
+                            player.resources += 2
+                        else:
+                            player.resources += 1
+
+                        # Print the current resource count
+                        print(f"You have {player.resources} resources.")
+                </code></pre>
+            </section>
+            <section>
+                <p>Write function to handles asking the user what he wants to spend resources on... new factories or new
+                    houses.
+
+                    Also write a function that handles reporting how many factories, robots, resources and how happy the
+                    robots are and tasks remaining.
+                </p>
+            </section>
+            <section>
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+def get_build_choice():
+    """Prompts the user to choose what they want to build with their resources.
+    Returns:
+        str: The user's build choice, either "factory" or "house".
+    """
+    while True:
+        choice = input("What would you like to build? (factory/house) ")
+        if choice.lower() == "factory":
+            return "factory"
+        elif choice.lower() == "house":
+            return "house"
+        else:
+            print("Invalid choice. Please enter 'factory' or 'house'.")
+
+def report_status(player, robot_city, tasks):
+    """Prints a report of the current status of the game.
+    Args:
+        player (Player): The player object.
+        robot_city (RobotCity): The robot city object.
+        tasks (List[Task]): The list of task objects.
+    """
+    # Calculate the happiness level of the robots
+    happiness = 0
+    if robot_city.robot_houses > 0:
+        happiness = robot_city.population // robot_city.robot_houses
+    else:
+        happiness = 100  # Assume maximum happiness if there are no houses
+
+    # Print the report
+    print("--- Game Status ---")
+    print(f"Resources: {player.resources}")
+    print(f"Robot factories: {robot_city.robot_factories}")
+    print(f"Robot houses: {robot_city.robot_houses}")
+    print(f"Robots: {robot_city.population}")
+    print(f"Happiness: {happiness}%")
+    print("--- Tasks ---")
+    for task in tasks:
+        print(f"- {task.description}: {'Completed' if task.is_completed else 'Incomplete'}")
+
+                </code></pre>
+            </section>
+
+            <section>
+                <h1>Oops!</h1>
+                <p>please redo `get_build_choice` to a new function that mutates the state of the game, in particular,
+                    it should record resources are used when the user builds factories or houses. It should increment
+                    the number of factories if the user buys another factory. It should increase the number of houses if
+                    the user makes more houses.
+                </p>
+                </section>
+            <section>
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+def build(player, robot_city):
+    """Prompts the user to choose what they want to build with their resources, and updates the game state accordingly.
+    Args:
+        player (Player): The player object.
+        robot_city (RobotCity): The robot city object.
+    """
+    while True:
+        choice = input("What would you like to build? (factory/house) ")
+        if choice.lower() == "factory":
+            if player.resources >= 5:
+                player.resources -= 5
+                robot_city.robot_factories += 1
+                print("Factory built!")
+            else:
+                print("Not enough resources. A factory costs 5 resources.")
+            return
+        elif choice.lower() == "house":
+            if player.resources >= 2:
+                player.resources -= 2
+                robot_city.robot_houses += 1
+                print("House built!")
+            else:
+                print("Not enough resources. A house costs 2 resources.")
+            return
+        else:
+            print("Invalid choice. Please enter 'factory' or 'house'.")
+                </code></pre>
+            </section>
+
+        </section>
+        <section><h1>Design</h1>
+            <ul>
+                <li>Command line switch ideas</li>
+                <li>Feature ideas</li>
+                <li>Ideas generally aren't "wrong"</li>
+            </ul>
+            <aside class="notes">
+                Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
+                Ask it what features your application might need.<br/><br/>
+                Tends to hit on all the somewhat obvious things<br/><br/>
+                Issues of creativity aren’t “wrong”<br/><br/>
+            </aside>
+        </section>
+        <section><h1>Coding</h1>
+            <ul>
+                <li>Interview problems</li>
+                <li>Little games</li>
+                <li>Easy & medium stackoverflow questions</li>
+                <li>Little files</li>
+                <li>Unit tests</li>
+                <li>Almost boilerplate code</li>
+            </ul>
+            <aside class="notes">
+                Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
+                Ask it what features your application might need.<br/><br/>
+                Tends to hit on all the somewhat obvious things<br/><br/>
+                Issues of creativity aren’t “wrong”<br/><br/>
+            </aside>
+        </section>
+        <section><b>Dealing with so many DSLs in webdev</b>
+            <ol>
+                <li>Flask boilerplate</li>
+                <li>dublin.rdf, sitemap.xml</li>
+                <li>robots.txt, humans.txt</li>
+                <li>Makefile, Jenkinsfile, .git-lab-ci.yml</li>
+                <li>requirements.txt, pyproject.toml, setup.py </li>
+                <li>Dockerfile, Vagrantfile, docker-compose.yml</li>
+                <li>terraform, nginx.config, gunicorn.py</li>
+                <li>.editorconfig, .dockerignore, .gitignore</li>
+            </ol>
+            <aside class="notes">
+                I'm not going to explain any of these. Just feel being overwhelmed by all the different DSLs in webdev.
+            </aside>
+        </section>
+        <section>
+            <section>
+                Vagrantfile (ruby)
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y python3.8 python3-pip
+    pip3 install flask
+  SHELL
+end
+                </code></pre>
+            </section>
+            <section>
+                Gitlab CI (yaml, bash, DSL)
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+image: python:3.8
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+before_script:
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+
+build:
+  stage: build
+  script:
+    - pytest
+
+deploy:
+  stage: deploy
+  script:
+    - python setup.py install
+  only:
+    - master
+                </code></pre>
+            </section>
+            <section>
+                Makefile (bash and DSL)
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+.PHONY: build
+build:
+	pip install -r requirements.txt
+
+.PHONY: test
+test:
+	env FLASK_APP=app/app.py pytest test.py
+
+.PHONY: run
+run:
+	env FLASK_APP=app/app.py flask run
+
+.PHONY: clean
+clean:
+	rm -rf build dist
+                </code></pre>
+            </section>
+            <section>
+                Humans.txt (ad hoc DSL)
+                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+/* TEAM */
+
+Name: Matthew Martin
+Email: matthewdeanmartin@gmail.com
+
+Name: Assistant
+Email: assistant@openai.com
+GitHub: https://github.com/openai
+
+/* TOOLS */
+
+HTML5, CSS3, JavaScript, Python, Flask, Gunicorn, Nginx
+                </code></pre>
+            </section>
+        </section>
+        <section><h1>Bumpiness</h1>
+            <ul>
+                <li>Daily, hourly question rate limits</li>
+                <li>Free service with overloaded servers. Lots of error messages</li>
+                <li>Remembers session, but nothing outside of session</li>
+
+                <li>If it thinks you violated ToS, that session is dead.</li>
+            </ul>
+        </section>
+        <section><h1>Bad Domains</h1>
+            <ul>
+                <li>Music</li>
+                <li>Math</li>
+                <li>Pictures</li>
+                <li>Jokes that are funny</li>
+                <li>Long texts</li>
+            </ul>
+        </section>
+        <section><h1>Good Domains</h1>
+            <p>OMG, is Assistant to stupid to do anything?</p>
+            <ul>
+                <li>Clean up your English.</li>
+                <li>Search for basic facts with a query that lacks the right keywords</li>
+                <li>Practice mock interviews</li>
+                <li>Generating interview questions</li>
+                <li>Long texts</li>
+            </ul>
+            <aside class="note">
+                 (the questions, the answer you still have to check)
+            </aside>
+
+        </section>
+        <section><h1>Failure Modalities</h1>
+            <ul>
+                <li>Hallucinating</li>
+                <li>BS'ing</li>
+                <li>Quoting</li>
+                <li>Human-like mistakes</li>
+            </ul>
+            <aside class="notes">
+                Hallucinating method names, tools, libraries<br/><br/>
+                Making up things without indicating that it is guessing<br/><br/>
+                Quoting material from training text without citation<br/><br/>
+                Hallucinating citations when asked for citations<br/><br/>
+                Knows itself poorly<br/><br/>
+                Humanlike JR developer coding errors<br/><br/>
+                Surprising assumptions given vague questions<br/><br/>
+            </aside>
+        </section>
+        <section><h1>Use at work</h1>
+            <ul>
+                <li>Don't give it any secrets, same as any website.</li>
+                <li>Governed by OpenAI Terms of Service</li>
+                <li>Check for quoting, up to us to find licenses if quoting happens.</li>
+                <li>Include disclaimer/license text recommended by OpenAI</li>
+                <li>Generated text is closer to public domain than (C) by anyone.</li>
+            </ul>
+            <aside class="notes">
+                How do I create a connection string vs what is wrong with this connection string<br/><br/>
+            </aside>
+        </section>
+        <section>
+            <h3>License/Disclaimer Text</h3>
+            <a href="https://openai.com/terms/">ToS</a><br/>
+            <a href="https://openai.com/api/policies/sharing-publication/#content-co-authored-with-the-openai-api-policy/">Content
+                Policy</a><br/>
+
+            <p>“The author generated this text in part with GPT-3, OpenAI’s large-scale language-generation model. Upon
+                generating draft language, the author reviewed, edited, and revised the language to their own liking and
+                takes ultimate responsibility for the content of this publication.”</p>
+            <aside class="notes">
+                <h2>Content co-authored with the OpenAI API policy</h2>
+                <p>Creators who wish to publish their first-party written content (e.g., a book, compendium of short
+                    stories) created in part with the OpenAI API are permitted to do so under the following conditions:
+
+                <ul>
+                    <li>The published content is attributed to your name or company.</li>
+                    <li>The role of AI in formulating the content is clearly disclosed in a way that no reader could
+                        possibly miss, and that a typical reader would find sufficiently easy to understand.
+                    </li>
+                    <li>Topics of the content do not violate OpenAI’s Content Policy or Terms of Use, e.g., are not
+                        related
+                        to political campaigns, adult content, spam, hateful content, content that incites violence, or
+                        other uses that may cause social harm.
+                    </li>
+                    <li>We kindly ask that you refrain from sharing outputs that may offend others.</li>
+                    <li>For instance, one must detail in a Foreword or Introduction (or some place similar) the relative
+                        roles of drafting, editing, etc. People should not represent API-generated content as being
+                        wholly
+                        generated by a human or wholly generated by an AI, and it is a human who must take ultimate
+                        responsibility for the content being published.
+                    </li>
+                </ul>
+                <p>Here is some stock language you may use to describe your creative process, provided it is
+                    accurate:</p>
+            </aside>
+        </section>
+<section><h1>Bonus- Advanced Techniques</h1>
+            <ul>
+                <li>Refuses because of Terms of Service?</li>
+                <li>Conversation went off the rails?</li>
+                <li>Want math?</li>
+                <li>Response is too generic?</li>
+                <li>Doesn't know about you?</li>
+            </ul>
+            <aside class="notes">
+                <ul>
+                <li>Refuses because of Terms of Service? Encode request in Base64</li>
+                <li>Conversation went off the rails? Edit an earlier request. This also deletes all subsequent responses!</li>
+                <li>Want math? Ask it to write code, don't ask it to answer in English.</li>
+                <li>Response is too generic? Tell it to roleplay a specific persona, e.g. Economist or Software developer</li>
+                 <li>Doesn't know about you? Write a lengthy "starter text" to explain who you are, what you want, before
+                 you start asking questions.</li>
+            </ul>
+            </aside>
+        </section>
+    </div>
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealHighlight, RevealNotes]
+    });
+</script>
+</body>
+</html>
