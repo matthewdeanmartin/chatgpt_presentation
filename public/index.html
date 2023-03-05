@@ -16,6 +16,24 @@
 <body>
 <div class="reveal">
     <div class="slides">
+        <section><h1>Using ChatGPT <br>for Coding</h1>
+            <h2>Evaluating & Using AI that almost works.</h2>
+            <hr/>
+            <h3>Matthew Martin</h3>
+            <p>See my LinkedIn to see who I work for, I don't speak for anyone.</p>
+            <p>Tech Lead</p>
+            <aside class="notes">
+                <ol>
+                    <li>an overview of your project/what you and your team do? Search engine for copyrights.</li>
+                    <li>how the topic you are discussing may plug into other projects/what others are doing? Many
+                        applications, just covering coding today.
+                    </li>
+                    <li>and how it might benefit them on their project/career? Likely to be a part of most people's
+                        workflow in the upcoming years, today if you want to.
+                    </li>
+                </ol>
+            </aside>
+        </section>
         <section><h1>Introduction to Assistant</h1>
             <ul>
                 <li>Alien Sentience</li>
@@ -48,33 +66,377 @@
 
             </aside>
         </section>
-        <section><h1>Workflows</h1>
-            <ul>
-                <li>Write code that does this... continue... continue...</li>
-                <li>Write classes...initialize...write main loop...</li>
-                <li>Here is my code...fix or improve it...</li>
-            </ul>
-        </section>
-        <section>
-            <h1>Let's Write Code</h1>
 
-        </section>
-        <section>
-            <h1>Prompt</h1>
-            <p>We are going to create a robot city themed rpg game for people who are completing their real life TODO
-                list. Each time they complete a real world TODO item, they get resources for their robot city. You get
-                bonus resources if you do your TODO list two days in a row. You can use resources to build robot
-                factories or robot houses. At the end of each day, the game prints a report of how happy the robots are
-                (they are happy if they have a good ratio of robots to houses).</p>
+        <div class="slides">
+            <section><h1>Unhelpful mental models</h1>
+                <ul>
+                    <li>It is "just" mad-libs or a markov chain generator?</li>
+                    <li>Is it a scifi omniscient super being?</li>
+                    <li>It is a liar?</li>
+                    <li>It is really thinking, feeling, reasoning, etc?</li>
+                </ul>
+                <aside class="notes">
+                    People get hung up on:
+                    <ul>
+                        <li>It is a scifi omiscient? No, that is a trope, a common story telling mechanism. It
+                            has capabilities that no machine had previously. Likewise, it isn't an incapable moron, it
+                            may irritate you or say some collosally stupid things, but there is a pattern to it.
+                        </li>
+                        <li>It has no epistimology. It just read text and can't do anything to check if anything is
+                            true.
+                            It has no lived experience to tell it if a text it read matches reality. It is the person
+                            that say
+                            I don't know but from what I've read...
+                        </li>
+                        <li>It is not a meat machine like us... we barely understand how our own brains work, but
+                            we should set aside if Assistant thinks like us because obviously it doesn't. More useful
+                            to look at behaviors- what objective behaviors do we see it doing? We can productively
+                            reason about that without needing to know how our own brain works.
+                        </li>
+                    </ul>
+                </aside>
+            </section>
 
-
-        </section>
-        <section>
-
+            <section><h1>Workflows</h1>
+                <ul>
+                    <li>Write code that does this... continue... continue...</li>
+                    <li>Write classes...initialize...write main loop...</li>
+                    <li>Here is my code...fix or improve it...</li>
+                    <li>Don't respond, just listen....Here is my context...Now I ask my question...</li>
+                </ul>
+                <aside class="notes">
+                    <p>Can keep only about 4000 characters of context in memory. If you post sample code and
+                        ask 4000 characters of questions, it has now forgotten the sample code.</p>
+                </aside>
+            </section>
             <section>
-                <p> Create the python dataclasses for this game. Do not initialize the objects or write the game loop
-                    yet.</p>
-                <pre><code data-trim data-noescape style="max-height:700px;">
+                <h1>Let's Write Code</h1>
+
+            </section>
+            <section>
+                <h1>Fish tanks</h1>
+                <p>Write a fish tank app that runs in the console that is written in Go (Golang). It should use all the
+                    ocean create emojis. It should put 14 creatures on the screen and randomly move them up down or
+                    diagonally. Please make sure they don't go off the screen. Also pay attention that the application
+                    will run on windows in the Microsoft Terminal and may need to use mscvt to handle two byte
+                    emojis.</p>
+            </section>
+            <section>
+                <section>
+                    <p> Python...first attempt</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+"""
+As ChatGPT generated it. Works in Windows Terminal.
+"""
+# Fish characters
+fish = ["🐟", "🐠", "🦈", "🐙", "🐋"]
+
+# Infinite loop to display the animation
+while True:
+    clear() # omitted for space
+    # Prints the ocean
+    print(" ".join(["🌊" for x in range(40)]))
+    # Prints the fish at random positions
+    for i in range(5):
+        x = random.randint(0, 39)
+        print(" " * x + fish[i])
+    time.sleep(0.2)
+                </code></pre>
+                </section>
+                <section>
+                    <p> Python...again with out flicker</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+                    """
+import random
+import curses
+
+# Initialize curses
+stdscr = curses.initscr()
+curses.start_color()
+curses.use_default_colors()
+curses.noecho()
+curses.curs_set(0)
+stdscr.keypad(1)
+stdscr.nodelay(1)
+
+
+# Fish characters
+fish = ["🐟", "🐠", "🦈", "🐙", "🐋"]
+
+# Initial positions for the fish
+fish_pos = [[random.randint(0, curses.COLS-1), random.randint(0, curses.LINES-1)] for _ in range(5)]
+
+while True:
+    # Clear the screen
+    stdscr.clear()
+    # Print the ocean
+    for i in range(curses.COLS):
+        try:
+            # stdscr.addstr(curses.LINES - 1, i, "X")  # 🌊
+            stdscr.addstr(0, i*2, "🌊")  # 🌊
+        except curses.error:
+            pass
+
+    # Print the fish in their current positions
+    for i, pos in enumerate(fish_pos):
+        try:
+            stdscr.addstr(pos[1], pos[0], fish[i])
+        except curses.error:
+            pass
+
+    # Move the fish
+    for i, pos in enumerate(fish_pos):
+        pos[0] += random.randint(-1, 1)
+        pos[1] += random.randint(-1, 1)
+        # Wrap around if the fish goes off the screen
+        pos[0] = pos[0] % curses.COLS
+        pos[1] = pos[1] % curses.LINES
+    # Refresh the screen
+    stdscr.refresh()
+    # Sleep for a short time
+    curses.napms(100*5)
+                </code></pre>
+                </section>
+                <section>
+                    <p> Bash, safari style</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+# African safari characters
+safari=("🦓" "🦒" "🐘" "🦏" "🦁")
+
+# Initial positions for the safari animals
+safari_pos=()
+for ((i=0; i<${#safari[@]}; i++))
+do
+    # LINES, COLUMNS reversed
+    safari_pos[i]=$(echo $((RANDOM%LINES)),$((RANDOM%COLUMNS)) | tr ' ' ',')
+done
+
+while true
+do
+    # Print the savanna
+    # MDM: Wrong. Puts it in the corner
+    # printf "%*s\n" $COLUMNS "🌵🌾🌴"
+
+    # More correct, but prints too many
+    printf "%0.s🌵🌾🌴" $(seq 1 $(($COLUMNS / 3)))
+    # sides
+    for ((i = 1; i < $LINES - 4; i++))
+    do
+        printf "🌵"
+        printf "%*s"  $(($COLUMNS * 2 - 50)) "  "
+        printf "🌴\n"
+    done
+    printf "%0.s🌵🌾🌴" $(seq 1 $(($COLUMNS / 3)))
+
+    # Print the safari animals
+    for ((i=0; i<${#safari[@]}; i++))
+    do
+        # Was using , not ;
+        codes="\033[${safari_pos[i]}H${safari[i]}"
+        new_codes=$(echo $codes | sed 's/,/;/g')
+        printf $new_codes
+    done
+    # Move the safari animals
+    for ((i=0; i<${#safari[@]}; i++))
+    do
+        safari_pos[i]=$(echo ${safari_pos[i]%,*} $(( ${safari_pos[i]##*,} + $((RANDOM%3-1)) )) | tr ' ' ',')
+        # echo ${safari_pos[i]}
+    done
+    # Sleep for a short time
+    sleep 0.3
+
+    # Clear the screen
+    printf "\033c"
+done
+
+                </code></pre>
+                </section>
+
+                <section>
+                    <p> Ruby Fish</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+fish = []
+sea_creatures = ["🐠", "🐟", "🐬", "🦈", "🦑", "🐙"]
+14.times do |i|
+    fish[i] = {x: rand(1..30), y: rand(1..30), type: sea_creatures.sample}
+end
+
+loop do
+    # system "clear" # clear the console
+    # wasn't clearing?
+    system("clear") || system("cls")
+    fish.each do |f|
+        print "\e[#{f[:y]};#{f[:x]}H#{f[:type]}"
+    end
+    print "\e[20;20H🌊\n" * 3 #draw waves
+    fish.each do |f|
+        f[:x] += rand(-1..1)
+        f[:y] += rand(-1..1)
+    end
+    sleep 1 # wait for 1 second
+end
+                </code></pre>
+                </section>
+                <section>
+                    <p>Fish in the c</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_X 30
+#define MAX_Y 30
+
+int main() {
+    // Initialize the fish positions
+    int fish1x = 5, fish1y = 5;
+    int fish2x = 10, fish2y = 10;
+    int fish3x = 15, fish3y = 15;
+
+    // Initialize random seed
+    srand(time(NULL));
+
+    while (1) {
+        // Clear the console
+        printf("\033[2J");
+
+        // Draw the fish
+        printf("\033[%d;%dH🐠", fish1y, fish1x);
+        printf("\033[%d;%dH🐟", fish2y, fish2x);
+        printf("\033[%d;%dH🦈", fish3y, fish3x);
+
+        // Draw the waves
+        printf("\033[%d;%dH🌊", 20, 20);
+        printf("\033[%d;%dH🌊", 21, 21);
+        printf("\033[%d;%dH🌊", 22, 22);
+
+        // Move the fish
+        fish1x += rand() % 3 - 1;
+        fish1y += rand() % 3 - 1;
+        if (fish1x < 0 || fish1x > MAX_X || fish1y < 0 || fish1y > MAX_Y) {
+            fish1x = 5;
+            fish1y = 5;
+        }
+
+        fish2x += rand() % 3 - 1;
+        fish2y += rand() % 3 - 1;
+        if (fish2x < 0 || fish2x > MAX_X || fish2y < 0 || fish2y > MAX_Y) {
+            fish2x = 10;
+            fish2y = 10;
+        }
+
+        fish3x += rand() % 3 - 1;
+        fish3y += rand() % 3 - 1;
+        if (fish3x < 0 || fish3x > MAX_X || fish3y < 0 || fish3y > MAX_Y) {
+            fish3x = 15;
+            fish3y = 15;
+        }
+
+        // Wait for 1 second
+        sleep(1);
+    }
+    return 0;
+}
+                </code></pre>
+                </section>
+                <section>
+                    <p>Go fish go!</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+const (
+	screenWidth  = 80
+	screenHeight = 20
+)
+
+var fishEmojis = []string{"🐠", "🐟", "🐬", "🦈", "🐋", "🐡", "🐙", "🦑"}
+
+func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	// Create an array to store the positions of each creature
+	creatures := make([][2]int, 14)
+
+	// initialize creatures array with random positions
+	for i := range creatures {
+		creatures[i][0] = rand.Intn(screenWidth)
+		creatures[i][1] = rand.Intn(screenHeight)
+	}
+
+	for {
+		// Clear the screen
+		fmt.Print("\033[2J")
+
+		// Draw the creatures
+		for i := 0; i < 14; i++ {
+			// Move the creatures one space at a time
+			move := rand.Intn(4)
+			switch move {
+			case 0: // move up
+				creatures[i][1]--
+			case 1: // move down
+				creatures[i][1]++
+			case 2: // move left
+				creatures[i][0]--
+			case 3: // move right
+				creatures[i][0]++
+			}
+			// make sure creatures stay in screen
+			if creatures[i][0] < 0 {
+				creatures[i][0] = 0
+			}
+			if creatures[i][0] >= screenWidth {
+				creatures[i][0] = screenWidth - 1
+			}
+			if creatures[i][1] < 0 {
+				creatures[i][1] = 0
+			}
+			if creatures[i][1] >= screenHeight {
+				creatures[i][1] = screenHeight - 1
+			}
+
+			// randomly select a fish emoji from the array
+			// What?
+			// fish := fishEmojis[rand.Intn(len(fishEmojis))]
+			fish := fishEmojis[i%len(fishEmojis)]
+			fmt.Print("\033[", creatures[i][1], ";", creatures[i][0], "H", fish)
+		}
+		// time.Sleep(time.Second / 30)
+		time.Sleep(time.Second)
+	}
+}
+
+                </code></pre>
+                </section>
+            </section>
+            <section><h1>Demo</h1></section>
+            <section>
+                <h1>Prompt</h1>
+                <p>We are going to create a robot city themed rpg game for people who are completing their real life
+                    TODO
+                    list. Each time they complete a real world TODO item, they get resources for their robot city. You
+                    get
+                    bonus resources if you do your TODO list two days in a row. You can use resources to build robot
+                    factories or robot houses. At the end of each day, the game prints a report of how happy the robots
+                    are
+                    (they are happy if they have a good ratio of robots to houses).</p>
+
+
+            </section>
+            <section>
+
+                <section>
+                    <p> Create the python dataclasses for this game. Do not initialize the objects or write the game
+                        loop
+                        yet.</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;">
                     from dataclasses import dataclass
 
                     @dataclass
@@ -98,10 +460,10 @@
                         is_completed: bool
 
                 </code></pre>
-            </section>
-            <section>
-                <aside>Looking good. Initialize the objects for the game. Do not write the game loop yet.</aside>
-                <pre><code data-trim data-noescape>
+                </section>
+                <section>
+                    <aside>Looking good. Initialize the objects for the game. Do not write the game loop yet.</aside>
+                    <pre><code data-trim data-noescape>
                     player = Player("Player 1", 0, 0, 0)
                     robot_city = RobotCity("Robot City", 0, 0, 0, 0)
 
@@ -110,10 +472,10 @@
                     tasks.append(Task("Do the dishes", False))
                     tasks.append(Task("Do the laundry", False))
                 </code></pre>
-            </section>
-            <section>
-                <p>Write the game loop for the program, thanks!</p>
-                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                </section>
+                <section>
+                    <p>Write the game loop for the program, thanks!</p>
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
                     while True:
                         # Print the current task list
                         print("Current tasks:")
@@ -137,16 +499,18 @@
                         # Print the current resource count
                         print(f"You have {player.resources} resources.")
                 </code></pre>
-            </section>
-            <section>
-                <p>Write function to handles asking the user what he wants to spend resources on... new factories or new
-                    houses.
+                </section>
+                <section>
+                    <p>Write function to handles asking the user what he wants to spend resources on... new factories or
+                        new
+                        houses.
 
-                    Also write a function that handles reporting how many factories, robots, resources and how happy the
-                    robots are and tasks remaining.
-                </p>
-            </section>
-            <section>
+                        Also write a function that handles reporting how many factories, robots, resources and how happy
+                        the
+                        robots are and tasks remaining.
+                    </p>
+                </section>
+                <section>
                 <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 def get_build_choice():
     """Prompts the user to choose what they want to build with their resources.
@@ -188,17 +552,20 @@ def report_status(player, robot_city, tasks):
         print(f"- {task.description}: {'Completed' if task.is_completed else 'Incomplete'}")
 
                 </code></pre>
-            </section>
-
-            <section>
-                <h1>Oops!</h1>
-                <p>please redo `get_build_choice` to a new function that mutates the state of the game, in particular,
-                    it should record resources are used when the user builds factories or houses. It should increment
-                    the number of factories if the user buys another factory. It should increase the number of houses if
-                    the user makes more houses.
-                </p>
                 </section>
-            <section>
+
+                <section>
+                    <h1>Oops!</h1>
+                    <p>please redo `get_build_choice` to a new function that mutates the state of the game, in
+                        particular,
+                        it should record resources are used when the user builds factories or houses. It should
+                        increment
+                        the number of factories if the user buys another factory. It should increase the number of
+                        houses if
+                        the user makes more houses.
+                    </p>
+                </section>
+                <section>
                 <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 def build(player, robot_city):
     """Prompts the user to choose what they want to build with their resources, and updates the game state accordingly.
@@ -227,57 +594,181 @@ def build(player, robot_city):
         else:
             print("Invalid choice. Please enter 'factory' or 'house'.")
                 </code></pre>
-            </section>
+                </section>
 
-        </section>
-        <section><h1>Design</h1>
-            <ul>
-                <li>Command line switch ideas</li>
-                <li>Feature ideas</li>
-                <li>Ideas generally aren't "wrong"</li>
-            </ul>
-            <aside class="notes">
-                Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
-                Ask it what features your application might need.<br/><br/>
-                Tends to hit on all the somewhat obvious things<br/><br/>
-                Issues of creativity aren’t “wrong”<br/><br/>
-            </aside>
-        </section>
-        <section><h1>Coding</h1>
-            <ul>
-                <li>Interview problems</li>
-                <li>Little games</li>
-                <li>Easy & medium stackoverflow questions</li>
-                <li>Little files</li>
-                <li>Unit tests</li>
-                <li>Almost boilerplate code</li>
-            </ul>
-            <aside class="notes">
-                Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
-                Ask it what features your application might need.<br/><br/>
-                Tends to hit on all the somewhat obvious things<br/><br/>
-                Issues of creativity aren’t “wrong”<br/><br/>
-            </aside>
-        </section>
-        <section><b>Dealing with so many DSLs in webdev</b>
-            <ol>
-                <li>Flask boilerplate</li>
-                <li>dublin.rdf, sitemap.xml</li>
-                <li>robots.txt, humans.txt</li>
-                <li>Makefile, Jenkinsfile, .git-lab-ci.yml</li>
-                <li>requirements.txt, pyproject.toml, setup.py </li>
-                <li>Dockerfile, Vagrantfile, docker-compose.yml</li>
-                <li>terraform, nginx.config, gunicorn.py</li>
-                <li>.editorconfig, .dockerignore, .gitignore</li>
-            </ol>
-            <aside class="notes">
-                I'm not going to explain any of these. Just feel being overwhelmed by all the different DSLs in webdev.
-            </aside>
-        </section>
-        <section>
+            </section>
+            <section><h1>Design</h1>
+                <ul>
+                    <li>Command line switch ideas</li>
+                    <li>Feature ideas</li>
+                    <li>Ideas generally aren't "wrong"</li>
+                </ul>
+                <aside class="notes">
+                    Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
+                    Ask it what features your application might need.<br/><br/>
+                    Tends to hit on all the somewhat obvious things<br/><br/>
+                    Issues of creativity aren’t “wrong”<br/><br/>
+                </aside>
+            </section>
             <section>
-                Vagrantfile (ruby)
-                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                <section><h1>CLI for a Stove</h1>
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+Here are some commands, sub-commands, and switches that might be useful for a CLI application that controls a high-end electric kitchen stove:
+
+Commands:
+
+stove: The main command for controlling the stove.
+recipe: A sub-command for managing and executing recipes.
+Sub-Commands:
+
+stove status: Display the current status of the stove (e.g., temperature, power level, etc.).
+stove start: Start the stove.
+stove stop: Stop the stove.
+stove temperature: Set the stove temperature.
+stove power: Set the stove power level.
+stove timer: Set a timer for the stove.
+recipe list: List available recipes.
+recipe execute: Execute a specific recipe.
+recipe create: Create a new recipe.
+recipe delete: Delete an existing recipe.
+Switches:
+
+--temperature: Specify the temperature for the stove.
+--power: Specify the power level for the stove.
+--timer: Specify a timer for the stove.
+--recipe: Specify a recipe to execute or manage.
+--verbose: Show more detailed output.
+--quiet: Show minimal output.
+It's important to note that a good CLI should be simple, yet powerful and easy to use by anyone.
+</code></pre>
+
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+                <section><h1>more...</h1>
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+Here is a comprehensive set of switches and options for the stove start and stove timer commands:
+
+stove start:
+
+-t, --temperature: Specify the temperature for the stove to start at (e.g., "stove start -t 350" to start the stove at 350 degrees Fahrenheit).
+-p, --power: Specify the power level for the stove to start at (e.g., "stove start -p high" to start the stove on high power).
+-c, --cookware: Specify the cookware to use (e.g., "stove start -c pan" to start the stove with a pan on it).
+-o, --oven: Specify whether to start the stove as an oven (e.g., "stove start -o" to start the stove as an oven).
+--verbose: Show more detailed output as the stove starts.
+stove timer
+
+-s, --start: Specify the time for the timer to start (e.g., "stove timer -s 10" to start the timer in 10 minutes).
+-d, --duration: Specify the duration of the timer (e.g., "stove timer -d 60" to set a timer for 60 minutes).
+--alert: Specify an alert sound or message to play when the timer expires.
+--verbose: Show more detailed output as the timer is set.
+It's important to keep in mind that these options and switches are examples and can be adjusted accordingly to the specific stove model and features.
+</code></pre>
+                    <aside class="notes">
+                    </aside>
+                </section>
+                <section><h1>CLI for a Stove</h1>
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+Here are some commands, sub-commands, and switches that might be useful for a CLI application that controls a high-end electric kitchen stove:
+
+Commands:
+
+stove: The main command for controlling the stove.
+recipe: A sub-command for managing and executing recipes.
+Sub-Commands:
+
+stove status: Display the current status of the stove (e.g., temperature, power level, etc.).
+stove start: Start the stove.
+stove stop: Stop the stove.
+stove temperature: Set the stove temperature.
+stove power: Set the stove power level.
+stove timer: Set a timer for the stove.
+recipe list: List available recipes.
+recipe execute: Execute a specific recipe.
+recipe create: Create a new recipe.
+recipe delete: Delete an existing recipe.
+Switches:
+
+--temperature: Specify the temperature for the stove.
+--power: Specify the power level for the stove.
+--timer: Specify a timer for the stove.
+--recipe: Specify a recipe to execute or manage.
+--verbose: Show more detailed output.
+--quiet: Show minimal output.
+It's important to note that a good CLI should be simple, yet powerful and easy to use by anyone.
+</code></pre>
+
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+                <section><h1>sudo make me a pizza at 7</h1>
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+#!/bin/bash
+
+# Get the current time
+current_time=$(date +%H:%M)
+
+# Calculate the time the pizza should be ready
+ready_time=$(date -d "7:00 PM" +%H:%M)
+
+# Calculate the time until the pizza should be ready
+time_until_ready=$(date -d "$ready_time - $current_time" +%s)
+
+# Start the stove
+stove start -t 425 -p high -c pizza_pan -o
+
+# Set a timer for the pizza to be ready
+stove timer -s $time_until_ready -d 15 --alert "Pizza is ready!"
+
+# Wait for the timer to expire
+sleep $time_until_ready
+
+# Display a message that the pizza is ready
+echo "Your pizza is ready! Enjoy!"
+
+</code></pre>
+                    <aside class="notes">
+                    </aside>
+                </section>
+            </section>
+            <section><h1>Coding</h1>
+                <ul>
+                    <li>Interview problems</li>
+                    <li>Little games</li>
+                    <li>Easy & medium stackoverflow questions</li>
+                    <li>Little files</li>
+                    <li>Unit tests</li>
+                    <li>Almost boilerplate code</li>
+                </ul>
+                <aside class="notes">
+                    Don’t know what command line options your tool needs? Let Assistant think them up.<br/><br/>
+                    Ask it what features your application might need.<br/><br/>
+                    Tends to hit on all the somewhat obvious things<br/><br/>
+                    Issues of creativity aren’t “wrong”<br/><br/>
+                </aside>
+            </section>
+            <section><b>Dealing with so many DSLs in webdev</b>
+                <ol>
+                    <li>Flask boilerplate</li>
+                    <li>dublin.rdf, sitemap.xml</li>
+                    <li>robots.txt, humans.txt</li>
+                    <li>Makefile, Jenkinsfile, .git-lab-ci.yml</li>
+                    <li>requirements.txt, pyproject.toml, setup.py</li>
+                    <li>Dockerfile, Vagrantfile, docker-compose.yml</li>
+                    <li>terraform, nginx.config, gunicorn.py</li>
+                    <li>.editorconfig, .dockerignore, .gitignore</li>
+                </ol>
+                <aside class="notes">
+                    I'm not going to explain any of these. Just feel being overwhelmed by all the different DSLs in
+                    webdev.
+                </aside>
+            </section>
+            <section>
+                <section>
+                    Vagrantfile (ruby)
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -291,10 +782,10 @@ Vagrant.configure("2") do |config|
   SHELL
 end
                 </code></pre>
-            </section>
-            <section>
-                Gitlab CI (yaml, bash, DSL)
-                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                </section>
+                <section>
+                    Gitlab CI (yaml, bash, DSL)
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 image: python:3.8
 
 variables:
@@ -320,10 +811,10 @@ deploy:
   only:
     - master
                 </code></pre>
-            </section>
-            <section>
-                Makefile (bash and DSL)
-                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                </section>
+                <section>
+                    Makefile (bash and DSL)
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 .PHONY: build
 build:
 	pip install -r requirements.txt
@@ -340,14 +831,14 @@ run:
 clean:
 	rm -rf build dist
                 </code></pre>
-            </section>
-            <section>
-                Humans.txt (ad hoc DSL)
-                <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
+                </section>
+                <section>
+                    Humans.txt (ad hoc DSL)
+                    <pre><code data-trim data-noescape style="max-height:700px;max-width:2000px">
 /* TEAM */
 
 Name: Matthew Martin
-Email: matthewdeanmartin@gmail.com
+Email: me@gmail.com
 
 Name: Assistant
 Email: assistant@openai.com
@@ -357,141 +848,179 @@ GitHub: https://github.com/openai
 
 HTML5, CSS3, JavaScript, Python, Flask, Gunicorn, Nginx
                 </code></pre>
+                </section>
             </section>
-        </section>
-        <section><h1>Bumpiness</h1>
-            <ul>
-                <li>Daily, hourly question rate limits</li>
-                <li>Free service with overloaded servers. Lots of error messages</li>
-                <li>Remembers session, but nothing outside of session</li>
-
-                <li>If it thinks you violated ToS, that session is dead.</li>
-            </ul>
-        </section>
-        <section><h1>Bad Domains</h1>
-            <ul>
-                <li>Music</li>
-                <li>Math</li>
-                <li>Pictures</li>
-                <li>Jokes that are funny</li>
-                <li>Long texts</li>
-            </ul>
-        </section>
-        <section><h1>Good Domains</h1>
-            <p>OMG, is Assistant to stupid to do anything?</p>
-            <ul>
-                <li>Clean up your English.</li>
-                <li>Search for basic facts with a query that lacks the right keywords</li>
-                <li>Practice mock interviews</li>
-                <li>Generating interview questions</li>
-                <li>Long texts</li>
-            </ul>
-            <aside class="note">
-                 (the questions, the answer you still have to check)
-            </aside>
-
-        </section>
-        <section><h1>Failure Modalities</h1>
-            <ul>
-                <li>Hallucinating</li>
-                <li>BS'ing</li>
-                <li>Quoting</li>
-                <li>Human-like mistakes</li>
-            </ul>
-            <aside class="notes">
-                Hallucinating method names, tools, libraries<br/><br/>
-                Making up things without indicating that it is guessing<br/><br/>
-                Quoting material from training text without citation<br/><br/>
-                Hallucinating citations when asked for citations<br/><br/>
-                Knows itself poorly<br/><br/>
-                Humanlike JR developer coding errors<br/><br/>
-                Surprising assumptions given vague questions<br/><br/>
-            </aside>
-        </section>
-        <section><h1>Use at work</h1>
-            <ul>
-                <li>Don't give it any secrets, same as any website.</li>
-                <li>Governed by OpenAI Terms of Service</li>
-                <li>Check for quoting, up to us to find licenses if quoting happens.</li>
-                <li>Include disclaimer/license text recommended by OpenAI</li>
-                <li>Generated text is closer to public domain than (C) by anyone.</li>
-            </ul>
-            <aside class="notes">
-                How do I create a connection string vs what is wrong with this connection string<br/><br/>
-            </aside>
-        </section>
-        <section>
-            <h3>License/Disclaimer Text</h3>
-            <a href="https://openai.com/terms/">ToS</a><br/>
-            <a href="https://openai.com/api/policies/sharing-publication/#content-co-authored-with-the-openai-api-policy/">Content
-                Policy</a><br/>
-
-            <p>“The author generated this text in part with GPT-3, OpenAI’s large-scale language-generation model. Upon
-                generating draft language, the author reviewed, edited, and revised the language to their own liking and
-                takes ultimate responsibility for the content of this publication.”</p>
-            <aside class="notes">
-                <h2>Content co-authored with the OpenAI API policy</h2>
-                <p>Creators who wish to publish their first-party written content (e.g., a book, compendium of short
-                    stories) created in part with the OpenAI API are permitted to do so under the following conditions:
-
+            <section><h1>Limitations</h1>
                 <ul>
-                    <li>The published content is attributed to your name or company.</li>
-                    <li>The role of AI in formulating the content is clearly disclosed in a way that no reader could
-                        possibly miss, and that a typical reader would find sufficiently easy to understand.
-                    </li>
-                    <li>Topics of the content do not violate OpenAI’s Content Policy or Terms of Use, e.g., are not
-                        related
-                        to political campaigns, adult content, spam, hateful content, content that incites violence, or
-                        other uses that may cause social harm.
-                    </li>
-                    <li>We kindly ask that you refrain from sharing outputs that may offend others.</li>
-                    <li>For instance, one must detail in a Foreword or Introduction (or some place similar) the relative
-                        roles of drafting, editing, etc. People should not represent API-generated content as being
-                        wholly
-                        generated by a human or wholly generated by an AI, and it is a human who must take ultimate
-                        responsibility for the content being published.
-                    </li>
+                    <li>Daily, hourly question rate limits</li>
+                    <li>Soon may cost money for usable responsiveness</li>
+                    <li>Remembers only current session</li>
+                    <li>Remembers about 4000 words</li>
+                    <li>Strict behavior policy stops some "bad" texts</li>
                 </ul>
-                <p>Here is some stock language you may use to describe your creative process, provided it is
-                    accurate:</p>
-            </aside>
-        </section>
-<section><h1>Bonus- Advanced Techniques</h1>
-            <ul>
-                <li>Refuses because of Terms of Service?</li>
-                <li>Conversation went off the rails?</li>
-                <li>Want math?</li>
-                <li>Response is too generic?</li>
-                <li>Doesn't know about you?</li>
-            </ul>
-            <aside class="notes">
+            </section>
+            <section><h1>It broke</h1>
                 <ul>
-                <li>Refuses because of Terms of Service? Encode request in Base64</li>
-                <li>Conversation went off the rails? Edit an earlier request. This also deletes all subsequent responses!</li>
-                <li>Want math? Ask it to write code, don't ask it to answer in English.</li>
-                <li>Response is too generic? Tell it to roleplay a specific persona, e.g. Economist or Software developer</li>
-                 <li>Doesn't know about you? Write a lengthy "starter text" to explain who you are, what you want, before
-                 you start asking questions.</li>
-            </ul>
-            </aside>
-        </section>
+                    <li>Servers overloaded. Try again!</li>
+                    <li>Refresh whole page</li>
+                    <li>Cut off in middle. "Continue from line X"</li>
+                    <li>If it thinks you violated ToS, that session is dead.</li>
+                    <li>Ask again in different words</li>
+                    <li>If "stuck" on misunderstanding, start new session</li>
+                    <li>Cancel the ongoing response</li>
+                    <li>Paid version with priority access to ChatGPT happening soon</li>
+                </ul>
+                <aside class="notes">
+                    Reword: especially for Terms of Service complaints.
+                </aside>
+            </section>
+            <section><h1>Bad Domains</h1>
+                <ul>
+                    <li>Music</li>
+                    <li>Math</li>
+                    <li>Pictures</li>
+                    <li>Jokes that are funny</li>
+                    <li>Long texts</li>
+                </ul>
+            </section>
+            <section><h1>Good Domains</h1>
+                <ul>
+                    <li>Clean up your English.</li>
+                    <li>Search for basic facts with a query that lacks the right keywords</li>
+                    <li>Interviews- Practice, creating questions, cheating on questions</li>
+                </ul>
+
+                <aside class="note">
+                </aside>
+
+            </section>
+            <section><h1>Kinds of Failure</h1>
+                <ul>
+                    <li>Hallucinating</li>
+                    <li>BS'ing</li>
+                    <li>Quoting without Attribution</li>
+                    <li>Human-like mistakes</li>
+                </ul>
+                <aside class="notes">
+                    Hallucinating method names, tools, libraries<br/><br/>
+                    Making up things without indicating that it is guessing<br/><br/>
+                    Quoting material from training text without citation<br/><br/>
+                    Hallucinating citations when asked for citations<br/><br/>
+                    Knows itself poorly<br/><br/>
+                    Humanlike JR developer coding errors<br/><br/>
+                    Surprising assumptions given vague questions<br/><br/>
+                </aside>
+            </section>
+            <section><h1>Use at work</h1>
+                <ul>
+                    <li>Don't give it any secrets, same as any website.</li>
+                    <li>Governed by OpenAI Terms of Service</li>
+                    <li>Check for quoting, up to us to find licenses if quoting happens.</li>
+                    <li>Include disclaimer/license text recommended by OpenAI</li>
+                    <li>Generated text is closer to public domain than (C) by anyone.</li>
+                </ul>
+                <aside class="notes">
+                    How do I create a connection string vs what is wrong with this connection string<br/><br/>
+                </aside>
+            </section>
+            <section>
+                <h3>License/Disclaimer Text</h3>
+                <a href="https://openai.com/terms/">ToS</a><br/>
+                <a href="https://openai.com/api/policies/sharing-publication/#content-co-authored-with-the-openai-api-policy/">Content
+                    Policy</a><br/>
+                <p>“The author generated this text in part with GPT-3, OpenAI’s large-scale language-generation model.
+                    Upon
+                    generating draft language, the author reviewed, edited, and revised the language to their own liking
+                    and
+                    takes ultimate responsibility for the content of this publication.”</p>
+                <aside class="notes">
+                    <h2>Content co-authored with the OpenAI API policy</h2>
+                    <p>Creators who wish to publish their first-party written content (e.g., a book, compendium of short
+                        stories) created in part with the OpenAI API are permitted to do so under the following
+                        conditions:
+
+                    <ul>
+                        <li>The published content is attributed to your name or company.</li>
+                        <li>The role of AI in formulating the content is clearly disclosed in a way that no reader could
+                            possibly miss, and that a typical reader would find sufficiently easy to understand.
+                        </li>
+                        <li>Topics of the content do not violate OpenAI’s Content Policy or Terms of Use, e.g., are not
+                            related
+                            to political campaigns, adult content, spam, hateful content, content that incites violence,
+                            or
+                            other uses that may cause social harm.
+                        </li>
+                        <li>We kindly ask that you refrain from sharing outputs that may offend others.</li>
+                        <li>For instance, one must detail in a Foreword or Introduction (or some place similar) the
+                            relative
+                            roles of drafting, editing, etc. People should not represent API-generated content as being
+                            wholly
+                            generated by a human or wholly generated by an AI, and it is a human who must take ultimate
+                            responsibility for the content being published.
+                        </li>
+                    </ul>
+                    <p>Here is some stock language you may use to describe your creative process, provided it is
+                        accurate:</p>
+                </aside>
+            </section>
+            <section><h1>Advanced Techniques</h1>
+                <ul>
+                    <li>Refuses because of Terms of Service?</li>
+                    <li>Conversation went off the rails?</li>
+                    <li>Want math?</li>
+                    <li>Response is too generic?</li>
+                    <li>Doesn't know about you?</li>
+                </ul>
+                <aside class="notes">
+                    <ul>
+                        <li>Refuses because of Terms of Service? Encode request in Base64</li>
+                        <li>Conversation went off the rails? Edit an earlier request. This also deletes all subsequent
+                            responses!
+                        </li>
+                        <li>Want math? Ask it to write code, don't ask it to answer in English.</li>
+                        <li>Response is too generic? Tell it to roleplay a specific persona, e.g. Economist or Software
+                            developer
+                        </li>
+                        <li>Doesn't know about you? Write a lengthy "starter text" to explain who you are, what you
+                            want, before
+                            you start asking questions.
+                        </li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Further Resources</h1>
+                <ul>
+                    <li><a href="https://chat.openai.com/">ChatGPT</a></li>
+                    <li><a href="https://about.gitlab.com/blog/2022/12/15/can-chatgpt-resolve-gitlab-issues/">
+                        Can ChatGPT resolve GitLab issues?
+                    </a></li>
+                    <li><a href="https://www.youtube.com/playlist?list=PLcAljDQ0plzVNNFW1r2EPgjI9-FU3pXHA">
+                        Chat GPT Coding Sessions on YouTube
+                    </a></li>
+                    <li><a href="https://catgpt.sd3.in/">
+                        A less capable, free parody... CatGPT
+                    </a></li>
+                </ul>
+            </section>
+        </div>
     </div>
-</div>
 
-<script src="dist/reveal.js"></script>
-<script src="plugin/notes/notes.js"></script>
-<script src="plugin/markdown/markdown.js"></script>
-<script src="plugin/highlight/highlight.js"></script>
-<script>
-    // More info about initialization & config:
-    // - https://revealjs.com/initialization/
-    // - https://revealjs.com/config/
-    Reveal.initialize({
-        hash: true,
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
 
-        // Learn about plugins: https://revealjs.com/plugins/
-        plugins: [RevealHighlight, RevealNotes]
-    });
-</script>
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealHighlight, RevealNotes]
+        });
+    </script>
 </body>
 </html>
